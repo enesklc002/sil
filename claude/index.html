@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Renkli Hesap Makinesi</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1e1e2f, #2d2d44);
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+ 
+  .calculator {
+    background: #22223b;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    width: 320px;
+  }
+ 
+  .screen {
+    background: #0f0f1a;
+    color: #ffffff;
+    font-style: italic;
+    font-size: 2.2em;
+    text-align: right;
+    padding: 20px 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    min-height: 70px;
+    overflow-x: auto;
+    white-space: nowrap;
+    letter-spacing: 1px;
+  }
+ 
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+ 
+  button {
+    border: none;
+    border-radius: 12px;
+    padding: 20px 0;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.1s ease, filter 0.15s ease;
+  }
+ 
+  button:active {
+    transform: scale(0.94);
+    filter: brightness(1.15);
+  }
+ 
+  .zero { grid-column: span 2; }
+ 
+  /* Her tuşa farklı renk */
+  .btn-7 { background: #e63946; }
+  .btn-8 { background: #f1a208; }
+  .btn-9 { background: #2a9d8f; }
+  .btn-div { background: #6a4c93; }
+ 
+  .btn-4 { background: #1982c4; }
+  .btn-5 { background: #8ac926; }
+  .btn-6 { background: #ff595e; }
+  .btn-mul { background: #ff924c; }
+ 
+  .btn-1 { background: #ffca3a; color:#222; }
+  .btn-2 { background: #4361ee; }
+  .btn-3 { background: #b5179e; }
+  .btn-sub { background: #4d908e; }
+ 
+  .btn-0 { background: #577590; }
+  .btn-dot { background: #43aa8b; }
+  .btn-eq { background: #f94144; }
+  .btn-add { background: #f3722c; }
+ 
+  .btn-clear { background: #ef476f; }
+  .btn-back { background: #118ab2; }
+  .btn-percent { background: #06d6a0; color:#222; }
+</style>
+</head>
+<body>
+ 
+<div class="calculator">
+  <div class="screen" id="screen">0</div>
+  <div class="buttons">
+    <button class="btn-clear" onclick="clearScreen()">C</button>
+    <button class="btn-back" onclick="backspace()">⌫</button>
+    <button class="btn-percent" onclick="appendValue('%')">%</button>
+    <button class="btn-div" onclick="appendValue('/')">÷</button>
+ 
+    <button class="btn-7" onclick="appendValue('7')">7</button>
+    <button class="btn-8" onclick="appendValue('8')">8</button>
+    <button class="btn-9" onclick="appendValue('9')">9</button>
+    <button class="btn-mul" onclick="appendValue('*')">×</button>
+ 
+    <button class="btn-4" onclick="appendValue('4')">4</button>
+    <button class="btn-5" onclick="appendValue('5')">5</button>
+    <button class="btn-6" onclick="appendValue('6')">6</button>
+    <button class="btn-sub" onclick="appendValue('-')">−</button>
+ 
+    <button class="btn-1" onclick="appendValue('1')">1</button>
+    <button class="btn-2" onclick="appendValue('2')">2</button>
+    <button class="btn-3" onclick="appendValue('3')">3</button>
+    <button class="btn-add" onclick="appendValue('+')">+</button>
+ 
+    <button class="btn-0 zero" onclick="appendValue('0')">0</button>
+    <button class="btn-dot" onclick="appendValue('.')">.</button>
+    <button class="btn-eq" onclick="calculate()">=</button>
+  </div>
+</div>
+ 
+<script>
+  const screen = document.getElementById('screen');
+  let expression = '';
+ 
+  function updateScreen() {
+    screen.textContent = expression === '' ? '0' : expression;
+  }
+ 
+  function appendValue(val) {
+    if (expression === '0' && val !== '.') {
+      expression = val;
+    } else {
+      expression += val;
+    }
+    updateScreen();
+  }
+ 
+  function clearScreen() {
+    expression = '';
+    updateScreen();
+  }
+ 
+  function backspace() {
+    expression = expression.slice(0, -1);
+    updateScreen();
+  }
+ 
+  function calculate() {
+    try {
+      let expr = expression.replace(/%/g, '/100');
+      let result = Function('"use strict"; return (' + expr + ')')();
+      if (result === undefined || Number.isNaN(result)) throw new Error();
+      expression = String(result);
+    } catch (e) {
+      expression = 'Hata';
+    }
+    updateScreen();
+  }
+</script>
+ 
+</body>
+</html>
+ 
